@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meesha Fabrics Premium Dispatch</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:
+    radial-gradient(circle at top left,#7c3aed,#0f172a),
+    radial-gradient(circle at bottom right,#2563eb,#111827);
+    min-height:100vh;
+    padding:25px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 25px 70px rgba(0,0,0,0.45);
+}
+
+.header{
+    background:linear-gradient(135deg,#7c3aed,#2563eb,#06b6d4);
+    color:white;
+    padding:45px;
+    text-align:center;
+}
+
+.header h1{
+    font-size:42px;
+    letter-spacing:3px;
+}
+
+.header p{
+    margin-top:10px;
+    font-size:18px;
+}
+
+.tabs{
+    display:flex;
+    gap:15px;
+    padding:20px;
+    background:rgba(255,255,255,0.08);
+}
+
+.tab-btn{
+    flex:1;
+    padding:18px;
+    border:none;
+    border-radius:18px;
+    cursor:pointer;
+    font-size:17px;
+    font-weight:bold;
+    background:rgba(255,255,255,0.15);
+    color:white;
+    transition:0.4s;
+}
+
+.tab-btn.active{
+    background:white;
+    color:#4f46e5;
+    box-shadow:0 10px 30px rgba(255,255,255,0.3);
+}
+
+.tab-btn:hover{
+    transform:translateY(-3px);
+}
+
+.form-area{
+    padding:35px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.input-box{
+    display:flex;
+    flex-direction:column;
+}
+
+.input-box label{
+    color:white;
+    margin-bottom:8px;
+    font-weight:bold;
+}
+
+.input-box input,
+.input-box select{
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    font-size:15px;
+    background:rgba(255,255,255,0.92);
+}
+
+.hidden{
+    display:none;
+}
+
+.btn-area{
+    display:flex;
+    gap:15px;
+    margin-top:30px;
+}
+
+.btn{
+    flex:1;
+    padding:18px;
+    border:none;
+    border-radius:16px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    transition:0.4s;
+}
+
+.save-btn{
+    background:linear-gradient(135deg,#7c3aed,#4f46e5);
+    color:white;
+}
+
+.export-btn{
+    background:linear-gradient(135deg,#10b981,#059669);
+    color:white;
+}
+
+.btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.25);
+}
+
+.table-section{
+    padding:30px;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+th{
+    background:#4f46e5;
+    color:white;
+    padding:18px;
+    text-align:left;
+}
+
+td{
+    padding:16px;
+    border-bottom:1px solid #eee;
+}
+
+tr:hover{
+    background:#f8fafc;
+}
+
+.badge{
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.courier{
+    background:#ddd6fe;
+    color:#5b21b6;
+}
+
+.transport{
+    background:#fde68a;
+    color:#92400e;
+}
+
+.track-btn{
+    background:linear-gradient(135deg,#facc15,#f59e0b);
+    color:black;
+    padding:8px 12px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:bold;
+}
+
+@media(max-width:768px){
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .btn-area{
+        flex-direction:column;
+    }
+
+    body{
+        padding:10px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>MEESHA FABRICS</h1>
+        <p>Premium Dispatch Management Panel</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="courierTab">📦 Courier Mode</button>
+        <button class="tab-btn" id="transportTab">🚚 Transport Mode</button>
+    </div>
+
+    <div class="form-area">
+
+        <div class="form-grid">
+
+            <div class="input-box">
+                <label>Party Name</label>
+                <input type="text" id="party">
+            </div>
+
+            <div class="input-box">
+                <label>Destination City</label>
+                <input type="text" id="city">
+            </div>
+
+            <div class="input-box" id="courierBox">
+                <label>Select Courier</label>
+                <select id="courierSelect">
+                    <option value="st-courier">ST Courier</option>
+                    <option value="delhivery">Delhivery</option>
+                    <option value="bluedart">Blue Dart</option>
+                </select>
+            </div>
+
+            <div class="input-box hidden" id="transportBox">
+                <label>Transport Name</label>
+                <input type="text" id="transportName" placeholder="VRL Logistics">
+            </div>
+
+            <div class="input-box">
+                <label>Tracking / LR Number</label>
+                <input type="text" id="lr">
+            </div>
+
+            <div class="input-box">
+                <label>Weight (KG)</label>
+                <input type="number" id="weight">
+            </div>
+
+            <div class="input-box">
+                <label>Dispatch Date</label>
+                <input type="date" id="date">
+            </div>
+
+            <div class="input-box">
+                <label>Upload LR Receipt</label>
+                <input type="file" id="receipt" accept="image/*,.pdf">
+            </div>
+
+        </div>
+
+        <div class="btn-area">
+            <button class="btn save-btn" id="saveBtn">💾 Save Record</button>
+            <button class="btn export-btn" id="exportBtn">📥 Export Excel</button>
+        </div>
+
+    </div>
+
+    <div class="table-section">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Party</th>
+                    <th>Service</th>
+                    <th>LR Number</th>
+                    <th>Weight</th>
+                    <th>Receipt</th>
+                    <th>Track</th>
+                </tr>
+            </thead>
+
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+let mode = 'courier';
+
+let records = JSON.parse(localStorage.getItem('meesha_dispatch_records')) || [];
+
+const courierTab = document.getElementById('courierTab');
+const transportTab = document.getElementById('transportTab');
+
+courierTab.addEventListener('click', () => {
+
+    mode = 'courier';
+
+    courierTab.classList.add('active');
+    transportTab.classList.remove('active');
+
+    document.getElementById('courierBox').classList.remove('hidden');
+    document.getElementById('transportBox').classList.add('hidden');
+});
+
+transportTab.addEventListener('click', () => {
+
+    mode = 'transport';
+
+    transportTab.classList.add('active');
+    courierTab.classList.remove('active');
+
+    document.getElementById('transportBox').classList.remove('hidden');
+    document.getElementById('courierBox').classList.add('hidden');
+});
+
+document.getElementById('saveBtn').addEventListener('click', saveRecord);
+document.getElementById('exportBtn').addEventListener('click', exportExcel);
+
+function saveRecord(){
+
+    const party = document.getElementById('party').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const lr = document.getElementById('lr').value.trim();
+    const weight = document.getElementById('weight').value.trim();
+    const date = document.getElementById('date').value;
+
+    const receiptFile = document.getElementById('receipt').files[0];
+
+    let receiptURL = '';
+
+    if(receiptFile){
+        receiptURL = URL.createObjectURL(receiptFile);
+    }
+
+    let service = '';
+
+    if(mode === 'courier'){
+        service = document.getElementById('courierSelect').value;
+    }else{
+        service = document.getElementById('transportName').value.trim();
+    }
+
+    if(!party || !lr || !date || !service){
+        alert('Please fill all required details');
+        return;
+    }
+
+    const data = {
+        id: Date.now(),
+        mode,
+        party,
+        city,
+        service,
+        lr,
+        weight,
+        date,
+        receipt: receiptURL
+    };
+
+    records.unshift(data);
+
+    localStorage.setItem('meesha_dispatch_records', JSON.stringify(records));
+
+    refreshTable();
+
+    document.getElementById('party').value = '';
+    document.getElementById('city').value = '';
+    document.getElementById('lr').value = '';
+    document.getElementById('weight').value = '';
+    document.getElementById('receipt').value = '';
+
+    alert('Record Saved Successfully');
+}
+
+function trackingLink(service, lr){
+
+    if(service === 'st-courier'){
+        return `https://stcourier.com/track/shipment?shipment_id=${lr}`;
+    }
+
+    if(service === 'delhivery'){
+        return `https://www.delhivery.com/track/package/${lr}`;
+    }
+
+    if(service === 'bluedart'){
+        return `https://www.bluedart.com/tracking?trackid=${lr}`;
+    }
+
+    return null;
+}
+
+function refreshTable(){
+
+    const tableBody = document.getElementById('tableBody');
+
+    tableBody.innerHTML = '';
+
+    records.forEach(item => {
+
+        const trackURL = trackingLink(item.service, item.lr);
+
+        tableBody.innerHTML += `
+        <tr>
+
+            <td>${item.date}</td>
+
+            <td>
+                <b>${item.party}</b><br>
+                <small>${item.city}</small>
+            </td>
+
+            <td>
+                <span class="badge ${item.mode}">
+                    ${item.service}
+                </span>
+            </td>
+
+            <td>${item.lr}</td>
+
+            <td>${item.weight} KG</td>
+
+            <td>
+                ${item.receipt
+                ? `<a href="${item.receipt}" target="_blank" class="track-btn">View</a>`
+                : 'No File'}
+            </td>
+
+            <td>
+                ${trackURL
+                ? `<a href="${trackURL}" target="_blank" class="track-btn">Track</a>`
+                : 'Manual'}
+            </td>
+
+        </tr>
+        `;
+    });
+}
+
+function exportExcel(){
+
+    const worksheet = XLSX.utils.json_to_sheet(records);
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Dispatch Records');
+
+    XLSX.writeFile(workbook, 'Meesha_Dispatch_Report.xlsx');
+}
+
+refreshTable();
+
+</script>
+
+</body>
+</html>
